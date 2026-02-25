@@ -49,7 +49,7 @@ class InferenceEngine:
             abs_path = os.path.abspath(path)
             if os.path.exists(path):
                 try:
-                    logger.info(f"Attempting to load model from {path}...")
+                    logger.info(f"Attempting to load model from local path: {path}...")
                     self.tokenizer = AutoTokenizer.from_pretrained(path)
                     self.model = AutoModelForSequenceClassification.from_pretrained(path)
                     
@@ -63,7 +63,20 @@ class InferenceEngine:
                     logger.info(f"Successfully loaded {self.model_version} from {path}")
                     return
                 except Exception as e:
-                    logger.error(f"Failed to load from {path}: {e}")
+                    logger.error(f"Failed to load from {path} (local): {e}")
+            
+            # Fallback: Try loading from Hugging Face Hub if it looks like a repo (contains '/')
+            elif "/" in path:
+                try:
+                    logger.info(f"Attempting to load model from Hugging Face Hub ({path})...")
+                    self.tokenizer = AutoTokenizer.from_pretrained(path)
+                    self.model = AutoModelForSequenceClassification.from_pretrained(path)
+                    
+                    self.model_version = f"HF Hub ({path.split('/')[-1]})"
+                    logger.info(f"Successfully loaded model from Hugging Face Hub: {path}")
+                    return
+                except Exception as e:
+                    logger.error(f"Failed to load from Hugging Face Hub ({path}): {e}")
         
         logger.critical("No valid models found in any provided paths!")
 

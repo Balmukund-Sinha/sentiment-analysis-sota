@@ -9,6 +9,13 @@ A production-grade, research-intensive Sentiment Analysis ecosystem built with *
 
 ---
 
+## 🌐 Live Demo & API
+
+- **Frontend (Vercel)**: [sentiment-analysis-sota.vercel.app](https://sentiment-analysis-sota.vercel.app)
+- **Backend (Hugging Face API)**: [mukundsinha/sentiment-api](https://huggingface.co/spaces/mukundsinha/sentiment-api)
+
+---
+
 ## 🏗️ System Architecture
 
 This system follows a modular **Service Layer** pattern, separating the high-performance inference engine from the explainability suite and the API orchestration.

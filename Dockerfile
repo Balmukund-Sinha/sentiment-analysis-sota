@@ -23,8 +23,8 @@ COPY calibration.py .
 # For local generic build we create dir
 RUN mkdir saved_model
 
-# Expose port
-EXPOSE 8000
+# Expose port (HF Spaces defaults to 7860)
+EXPOSE 7860
 
 # Run
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "7860"]
