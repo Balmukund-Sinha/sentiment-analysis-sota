@@ -27,7 +27,7 @@ class InferenceEngine:
         self.use_bf16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
         self.dtype = torch.bfloat16 if self.use_bf16 else torch.float32
         
-        if self.model:
+        if self.model is not None:
             # Move to device and set to eval mode
             self.model.to(self.device).eval()
             
@@ -89,7 +89,7 @@ class InferenceEngine:
         if isinstance(texts, str):
             texts = [texts]
 
-        if not self.model or not self.tokenizer:
+        if self.model is None or self.tokenizer is None:
             return [{"error": "Model not loaded"}] * len(texts)
 
         all_results = []
