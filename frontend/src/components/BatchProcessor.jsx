@@ -23,7 +23,8 @@ const BatchProcessor = () => {
             const lines = text.split('\n').filter(l => l.trim().length > 10).slice(0, 500); // Increased limit to 500 for production use
 
             try {
-                const response = await fetch('http://localhost:8000/predict_batch', {
+                const API_URL = import.meta.env.VITE_API_URL || 'https://mukundsinha-sentiment-api.hf.space';
+                const response = await fetch(`${API_URL}/predict_batch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ texts: lines, explain: false })

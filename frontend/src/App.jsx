@@ -27,7 +27,8 @@ function App() {
     setResult(null);
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://mukundsinha-sentiment-api.hf.space';
+      const response = await fetch(`${API_URL}/predict`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

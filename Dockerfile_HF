@@ -1,0 +1,31 @@
+FROM python:3.10-slim
+
+# Set environment variables to avoid 'uid not found' error
+ENV USER=user
+ENV HOME=/home/user
+ENV PATH=$HOME/.local/bin:$PATH
+
+# Create a non-root user and set up home directory
+RUN useradd -m -u 1000 user
+WORKDIR $HOME/app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY --chown=user . .
+
+# Ensure Torch Inductor has a writable cache directory
+ENV TORCHINDUCTOR_CACHE_DIR=/tmp/torch_inductor_cache
+RUN mkdir -p $TORCHINDUCTOR_CACHE_DIR && chmod -R 777 $TORCHINDUCTOR_CACHE_DIR
+
+# Expose HF default port
+EXPOSE 7860
+
+CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "7860"]

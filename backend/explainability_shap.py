@@ -88,3 +88,5 @@ class ShapEngine:
         except Exception as e:
             logger.error(f"SHAP explanation failed: {e}")
             return []
+
+# Updated: 1772056466.9869936
