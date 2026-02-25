@@ -34,7 +34,10 @@ app.add_middleware(
 
 # Initialize Engine with absolute path detection
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH_ENV = os.getenv("MODEL_PATH")
+
 MODEL_PATHS = [
+    MODEL_PATH_ENV, # Prioritize environment variable
     os.path.join(ROOT_DIR, "deberta_sentiment_model"),
     os.path.join(ROOT_DIR, "roberta_sentiment_model"),
     os.path.join(ROOT_DIR, "saved_model"),
@@ -42,6 +45,8 @@ MODEL_PATHS = [
     "./roberta_sentiment_model",
     "./saved_model"
 ]
+# Filter out None values
+MODEL_PATHS = [p for p in MODEL_PATHS if p]
 engine = InferenceEngine(MODEL_PATHS)
 
 # Explainability Fallback Logic
