@@ -5,14 +5,22 @@ A production-grade, research-intensive Sentiment Analysis ecosystem built with *
 ![Version](https://img.shields.io/badge/version-4.5%20Production-blueviolet)
 ![Model](https://img.shields.io/badge/Model-DeBERTa--v3--Base-green)
 ![Explainability](https://img.shields.io/badge/XAI-SHAP-orange)
-![GPU](https://img.shields.io/badge/GPU-RTX%204060%20Optimized-red)
+![Deployment](https://img.shields.io/badge/Status-Live%20&%20Healthy-success)
+![Hosting](https://img.shields.io/badge/Hybrid-Vercel%20%2B%20HF-blue)
 
 ---
 
 ## 🌐 Live Demo & API
 
-- **Frontend (Vercel)**: [sentiment-analysis-sota.vercel.app](https://sentiment-analysis-sota.vercel.app)
-- **Backend (Hugging Face API)**: [mukundsinha/sentiment-api](https://huggingface.co/spaces/mukundsinha/sentiment-api)
+- **Live Dashboard (Frontend)**: [sentiment-analysis-sota.vercel.app](https://sentiment-analysis-sota.vercel.app)
+- **High-Performance API (Backend)**: [mukundsinha/sentiment-api](https://huggingface.co/spaces/mukundsinha/sentiment-api)
+- **Model Storage**: [mukundsinha/sentiment-deberta-v3](https://huggingface.co/mukundsinha/sentiment-deberta-v3)
+
+### 🏗️ Hybrid Deployment Strategy
+Optimized for high-concurrency and GPU acceleration:
+*   **Vercel (UI)**: Global React distribution for ultra-fast load times.
+*   **Hugging Face Spaces (Inference)**: Dockerized Python environment with persistent model volumes.
+*   **ML Hub**: Automatic model streaming from the Hugging Face Hub.
 
 ---
 
