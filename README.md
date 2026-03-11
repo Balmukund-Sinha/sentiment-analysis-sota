@@ -14,7 +14,7 @@ A production-grade, research-intensive Sentiment Analysis ecosystem built with *
 
 - **Live Dashboard (Frontend)**: [sentiment-analysis-sota.vercel.app](https://sentiment-analysis-sota.vercel.app)
 - **High-Performance API (Backend)**: [mukundsinha/sentiment-api](https://huggingface.co/spaces/mukundsinha/sentiment-api)
-- **Model Storage**: [mukundsinha/sentiment-deberta-v3](https://huggingface.co/mukundsinha/sentiment-deberta-v3)
+- **Model Storage**: [mukundsinha/sentiment-deberta-v3-3class](https://huggingface.co/mukundsinha/sentiment-deberta-v3-3class)
 
 ### 🏗️ Hybrid Deployment Strategy
 Optimized for high-concurrency and GPU acceleration:
@@ -62,7 +62,7 @@ graph TD
 | **DeBERTa-v3** | **93.4%** | **93.1** | **~39ms** | **~180ms (Cached)** |
 
 > [!NOTE]
-> Benchmarks performed on the IMDB sentiment test set. Latency reflects single-item inference with BF16 enabled.
+> v4.5 Benchmarks performed on the **TweetEval** sentiment test set (Ternary). Latency reflects single-item inference with BF16 enabled on CPU-basic instances.
 
 ---
 
@@ -83,6 +83,7 @@ graph TD
     *   **Disentangled Attention**: Unlike BERT/RoBERTa where word and position vectors are summed, DeBERTa represents them separately, allowing the model to better understand the relationship between relative positions and content.
     *   **ELECTRA-style Pre-training**: Uses a "Discriminator" rather than "Generator" approach, making it significantly more sample-efficient.
     *   **Tokenization**: Uses **SentencePiece** which is more robust to out-of-vocabulary terms and whitespace.
+    *   **Ternary Tuning (v4.5)**: Specifically fine-tuned on **SST-3 / TweetEval** to resolve double-negation bias and provide a high-confidence **Neutral** category.
 
 ---
 
@@ -136,7 +137,7 @@ We are constantly evolving the system toward ultra-low latency and higher scalab
 ├── frontend/               # React Dashboard (Vite)
 │   ├── src/                # UI Components (InputCard, ResultCard, Batch)
 │   └── index.html          # Entry Point
-├── deberta_sentiment_model/ # Fine-tuned DeBERTa model artifacts
+├── deberta_sentiment_3class/ # Fine-tuned DeBERTa (Ternary) model artifacts
 ├── sentiment_analysis.py    # CLI inference tool
 ├── train_v3.py             # Advanced training script (LLRD, BF16)
 └── verify_production.py    # Benchmarking & Validation suite
