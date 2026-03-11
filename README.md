@@ -4,8 +4,8 @@ A production-grade, research-intensive Sentiment Analysis ecosystem built with *
 
 ![Version](https://img.shields.io/badge/version-4.5%20Production-blueviolet)
 ![Model](https://img.shields.io/badge/Model-DeBERTa--v3--Base-green)
-![Explainability](https://img.shields.io/badge/XAI-SHAP-orange)
-![Deployment](https://img.shields.io/badge/Status-Live%20&%20Healthy-success)
+![Classification](https://img.shields.io/badge/Classes-Ternary%20(Neg%2FNeu%2FPos)-orange)
+![Explainability](https://img.shields.io/badge/XAI-SHAP-success)
 ![Hosting](https://img.shields.io/badge/Hybrid-Vercel%20%2B%20HF-blue)
 
 ---
@@ -114,6 +114,7 @@ We are constantly evolving the system toward ultra-low latency and higher scalab
 
 ### 🔬 Explainable AI (SHAP)
 *   **Transparency**: No more black-box predictions. The UI highlights exactly which words drove the sentiment.
+*   **Ternary Support**: Explains **Positive**, **Negative**, and **Neutral** classes dynamically.
 *   **SHAP (SHapley Additive exPlanations)**: Uses game theory to assign an importance value to each token.
 *   **Performance Fix**: Traditionally slow (~8s), our implementation uses **LRU Caching** to reduce explanation latency to **<200ms** for known inputs.
 

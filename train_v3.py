@@ -41,19 +41,21 @@ def check_environment():
 # Configuration (RTX 4060 Optimized)
 # ==========================================
 MODEL_NAME = "microsoft/deberta-v3-base" 
-MAX_LEN = 512 
-BATCH_SIZE = 16 # Increased from 8 (Safe with Gradient Checkpointing on 8GB VRAM)
-GRADIENT_ACCUMULATION_STEPS = 2 # Adjusted for larger batch size (Total effective = 32)
-EPOCHS = 5
+MAX_LEN = 128 # Optimized for tweets/short reviews
+BATCH_SIZE = 32 # Increased due to shorter sequence length
+GRADIENT_ACCUMULATION_STEPS = 1 # No need for accumulation with 32 batch size
+EPOCHS = 3 # 3 epochs is standard for fine-tuning
 LEARNING_RATE = 2e-5
-OUTPUT_DIR = "./deberta_sentiment_model"
+OUTPUT_DIR = "./deberta_sentiment_3class" # New directory for 3-class model
 WEIGHT_DECAY = 0.01
 LR_DECAY = 0.9
 
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='binary')
+    
+    # Use macro average for 3-class metrics
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, predictions, average='macro', zero_division=0)
     acc = accuracy_score(labels, predictions)
     return {
         'accuracy': acc,
@@ -81,7 +83,6 @@ class CustomTrainer(Trainer):
         if hasattr(opt_model, "deberta"):
             layers = [opt_model.deberta.embeddings] + list(opt_model.deberta.encoder.layer)
         else:
-            # Fallback for RoBERTa/BERT if changed
             layers = [opt_model.base_model.embeddings] + list(opt_model.base_model.encoder.layer)
             
         layers.reverse()
@@ -107,12 +108,13 @@ class CustomTrainer(Trainer):
 
 def main():
     check_environment()
-    # Resume strictly if check passes
-    print(f"Initializing Phase 3 Pipeline: {MODEL_NAME}...")
+    print(f"Initializing 3-Class Upgrade Pipeline: {MODEL_NAME}...")
     
-    # Load Dataset
+    # Load Dataset: tweet_eval (sentiment) has 3 classes
+    # 0: negative, 1: neutral, 2: positive
     try:
-        dataset = load_dataset("imdb")
+        print("Loading tweet_eval sentiment dataset...")
+        dataset = load_dataset("tweet_eval", "sentiment")
     except Exception as e:
         print(f"Error loading dataset: {e}")
         return
@@ -131,10 +133,10 @@ def main():
     print("Tokenizing...")
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
     train_dataset = tokenized_datasets["train"]
-    eval_dataset = tokenized_datasets["test"]
+    eval_dataset = tokenized_datasets["validation"] # tweet_eval uses validation for split
 
-    # Model
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)
+    # Model: num_labels=3
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=3)
 
     # Arguments
     # Optimizations for RTX 4060 (Ada Lovelace Architecture):

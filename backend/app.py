@@ -38,6 +38,8 @@ MODEL_PATH_ENV = os.getenv("MODEL_PATH")
 
 MODEL_PATHS = [
     MODEL_PATH_ENV, # Prioritize environment variable
+    "mukundsinha/sentiment-deberta-v3-3class", # Top priority Hub model
+    os.path.join(ROOT_DIR, "deberta_sentiment_3class"),
     os.path.join(ROOT_DIR, "deberta_sentiment_model"),
     os.path.join(ROOT_DIR, "roberta_sentiment_model"),
     os.path.join(ROOT_DIR, "saved_model"),
@@ -80,7 +82,7 @@ class PredictResponse(BaseModel):
     sentiment: str
     confidence: float
     status: str
-    probabilities: Dict[str, float]
+    probabilities: Dict[str, float] # negative, neutral, positive
     model_version: str
     explanation: Optional[List[Dict[str, Any]]] = None
     latency_ms: float

@@ -11,6 +11,8 @@ const ResultCard = ({ result }) => {
     }
 
     const isPositive = result.sentiment === 'Positive';
+    const isNeutral = result.sentiment === 'Neutral';
+    const isNegative = result.sentiment === 'Negative';
     const confidencePercent = Math.round(result.confidence * 100);
     const isReliable = result.status === 'Reliable';
 
@@ -22,7 +24,7 @@ const ResultCard = ({ result }) => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '2rem' }}>
-                <div className={`result-label ${isPositive ? 'result-positive' : 'result-negative'}`} style={{ fontSize: '2rem' }}>
+                <div className={`result-label ${isPositive ? 'result-positive' : (isNeutral ? 'result-neutral' : 'result-negative')}`} style={{ fontSize: '2rem' }}>
                     {result.sentiment}
                     <span className={`badge ${isReliable ? 'badge-reliable' : 'badge-uncertain'}`} style={{ marginLeft: '1rem', fontSize: '0.7rem' }}>
                         {result.status}
@@ -39,7 +41,7 @@ const ResultCard = ({ result }) => {
                             className="confidence-fill"
                             style={{
                                 width: `${confidencePercent}%`,
-                                backgroundColor: isPositive ? 'var(--success)' : 'var(--danger)'
+                                backgroundColor: isPositive ? 'var(--success)' : (isNeutral ? '#eab308' : 'var(--danger)')
                             }}
                         />
                     </div>
@@ -47,15 +49,23 @@ const ResultCard = ({ result }) => {
             </div>
 
             <div style={{ padding: '1rem', background: 'rgba(150,150,150,0.05)', borderRadius: '12px', marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                    <span>Probability Distribution:</span>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <span style={{ borderLeft: '3px solid var(--success)', paddingLeft: '5px' }}>Pos: {Math.round(result.probabilities.positive * 100)}%</span>
-                        <span style={{ borderLeft: '3px solid var(--danger)', paddingLeft: '5px' }}>Neg: {Math.round(result.probabilities.negative * 100)}%</span>
+                <div style={{ marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 'bold' }}>Probability Distribution:</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                    <div style={{ borderLeft: '4px solid var(--success)', paddingLeft: '8px' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Positive</div>
+                        <div style={{ fontWeight: '800' }}>{Math.round((result.probabilities.positive || 0) * 100)}%</div>
+                    </div>
+                    <div style={{ borderLeft: '4px solid #eab308', paddingLeft: '8px' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Neutral</div>
+                        <div style={{ fontWeight: '800' }}>{Math.round((result.probabilities.neutral || 0) * 100)}%</div>
+                    </div>
+                    <div style={{ borderLeft: '4px solid var(--danger)', paddingLeft: '8px' }}>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Negative</div>
+                        <div style={{ fontWeight: '800' }}>{Math.round((result.probabilities.negative || 0) * 100)}%</div>
                     </div>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                    ⚡ Latecy: {result.latency_ms}ms
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.75rem', borderTop: '1px solid rgba(150,150,150,0.1)', paddingTop: '0.5rem' }}>
+                    ⚡ Latency: {result.latency_ms}ms • Model: {result.model_version}
                 </div>
             </div>
 
@@ -66,6 +76,9 @@ const ResultCard = ({ result }) => {
                         <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.7rem' }}>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <div style={{ width: 8, height: 8, background: 'rgba(0, 120, 255, 0.6)', borderRadius: '2px' }}></div> Positive
+                            </span>
+                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <div style={{ width: 8, height: 8, background: 'rgba(234, 179, 8, 0.6)', borderRadius: '2px' }}></div> Neutral
                             </span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <div style={{ width: 8, height: 8, background: 'rgba(255, 60, 60, 0.6)', borderRadius: '2px' }}></div> Negative
@@ -78,7 +91,15 @@ const ResultCard = ({ result }) => {
                             const val = item.normalized_score || 0;
                             const isPos = val > 0;
                             const opacity = Math.abs(val) * 0.7;
-                            const color = isPos ? `rgba(0, 120, 255, ${opacity})` : `rgba(255, 60, 60, ${opacity})`;
+                            let color = `rgba(150, 150, 150, ${opacity})`; // Neutralish grey if near 0
+                            
+                            if (isPositive) {
+                                color = isPos ? `rgba(0, 120, 255, ${opacity})` : `rgba(255, 60, 60, ${opacity})`;
+                            } else if (isNeutral) {
+                                color = isPos ? `rgba(234, 179, 8, ${opacity})` : `rgba(200, 200, 200, ${opacity})`;
+                            } else if (isNegative) {
+                                color = isPos ? `rgba(0, 120, 255, ${opacity})` : `rgba(255, 60, 60, ${opacity})`;
+                            }
 
                             return (
                                 <span

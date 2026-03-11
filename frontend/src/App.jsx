@@ -54,8 +54,8 @@ function App() {
     <div className="container">
       <header className="glass-panel" style={{ padding: '1.5rem 2rem', borderTop: 'none', borderLeft: 'none', borderRight: 'none', borderRadius: '0 0 24px 24px', position: 'sticky', top: 0, zIndex: 1000 }}>
         <div>
-          <h1 className="title" style={{ margin: 0, fontSize: '1.75rem' }}>Sentiment Engine <span style={{ fontSize: '0.8rem', verticalAlign: 'middle', opacity: 0.7 }}>v4.0</span></h1>
-          <p className="subtitle" style={{ fontSize: '0.85rem' }}>Production-Grade DeBERTa-v3 NLP</p>
+          <h1 className="title" style={{ margin: 0, fontSize: '1.75rem' }}>Sentiment Engine <span style={{ fontSize: '0.8rem', verticalAlign: 'middle', opacity: 0.7 }}>v4.5</span></h1>
+          <p className="subtitle" style={{ fontSize: '0.85rem' }}>Production-Grade DeBERTa-v3 NLP (Ternary)</p>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

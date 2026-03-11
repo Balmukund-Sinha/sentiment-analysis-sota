@@ -34,7 +34,7 @@ class ShapEngine:
             with torch.no_grad():
                 outputs = self.model(**inputs)
                 probs = torch.softmax(outputs.logits, dim=-1).cpu().numpy()
-            return probs[:, 1] # Probability of Positive class
+            return probs # Return all classes (Negative, Neutral, Positive)
 
         # Use explicit Text masker
         masker = shap.maskers.Text(self.tokenizer)
@@ -57,9 +57,17 @@ class ShapEngine:
             tokens = shap_values.data[0]
             values = shap_values.values[0] # Expect (seq_len, 2) for binary classifier
             
-            # SHAP returns (seq_len, num_classes). Select Positive class (index 1)
+            # SHAP returns (seq_len, num_classes). 
+            # We want to explain the "winning" class.
             if len(values.shape) == 2 and values.shape[1] > 1:
-                values = values[:, 1]
+                # Find the class with highest probability to explain
+                # In predictor we return probs, so shap_values.values has components for each class
+                # We'll take the class that has the highest absolute SHAP values or just the predicted class
+                # For simplicity and consistency with the UI, we'll explain the class the model predicted.
+                pred_idx = np.argmax(np.sum(values, axis=0)) # Rough heuristic for "winning" class in SHAP
+                # Better: since we know the model's prediction from engine, we could pass it in.
+                # But SHAP's internal sum is usually aligned with the prediction.
+                values = values[:, pred_idx]
             
             # Determine overall scale for normalization
             max_abs = max(np.abs(values)) if len(values) > 0 else 0

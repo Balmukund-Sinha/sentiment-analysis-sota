@@ -208,14 +208,26 @@ header {
   color: var(--danger);
 }
 
+.badge-neutral {
+  background: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+}
+
 .badge-reliable {
   border: 1px solid var(--success);
   color: var(--success);
 }
 
-.badge-uncertain {
-  border: 1px solid var(--warning);
-  color: var(--warning);
+.result-positive {
+  color: var(--success);
+}
+
+.result-negative {
+  color: var(--danger);
+}
+
+.result-neutral {
+  color: #eab308;
 }
 
 /* Progress & Confidence */

@@ -9,10 +9,13 @@ ENV/
 
 # Large Model Files
 *_model/
+*class/
 saved_model/
 *.bin
 *.pt
 *.pth
+*.safetensors
+*.model
 
 # OS
 .DS_Store

@@ -32,16 +32,8 @@ class InferenceEngine:
             self.model.to(self.device).eval()
             
             # Optimization: torch.compile (PyTorch 2.0+)
-            # Note: Triton (required for compile) is often unavailable on Windows.
-            if os.name != "nt": 
-                try:
-                    logger.info("Applying torch.compile() for inference optimization...")
-                    self.model = torch.compile(self.model)
-                    logger.info("torch.compile() successful.")
-                except Exception as e:
-                    logger.warning(f"torch.compile() failed: {e}")
-            else:
-                logger.info("Skipping torch.compile() on Windows (Triton dependency). Using standard eager mode.")
+            # Disabled by default for better compatibility across environments (Docker/Windows).
+            logger.info("Using standard eager mode for inference.")
 
     def _load_model(self, paths: List[str]):
         """Iteratively try to load the best available model."""
@@ -116,9 +108,19 @@ class InferenceEngine:
             probs = F.softmax(logits, dim=-1)
             
             for j in range(len(batch_texts)):
-                conf, label_idx = torch.max(probs[j], dim=-1)
+                # Get probabilities and predicted class
+                item_probs = probs[j]
+                conf, label_idx = torch.max(item_probs, dim=-1)
                 conf_val = conf.item()
-                label = "Positive" if label_idx.item() == 1 else "Negative"
+                
+                # tweet_eval mapping: 0: negative, 1: neutral, 2: positive
+                idx = label_idx.item()
+                if idx == 0:
+                    label = "Negative"
+                elif idx == 1:
+                    label = "Neutral"
+                else:
+                    label = "Positive"
                 
                 # Confidence Thresholding (Uncertainty Detection)
                 status = "Reliable" if conf_val >= confidence_threshold else "Uncertain"
@@ -128,8 +130,9 @@ class InferenceEngine:
                     "confidence": round(conf_val, 4),
                     "status": status,
                     "probabilities": {
-                        "negative": round(probs[j][0].item(), 4),
-                        "positive": round(probs[j][1].item(), 4)
+                        "negative": round(item_probs[0].item(), 4),
+                        "neutral": round(item_probs[1].item(), 4),
+                        "positive": round(item_probs[2].item(), 4)
                     },
                     "model_version": self.model_version
                 })
